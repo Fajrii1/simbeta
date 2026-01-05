@@ -41,21 +41,25 @@
                     <hr>
                     
                     <?php 
-                        $statusRaw = strtolower($pengajuan['status']); // Status asli dari tabel pengajuan
-                        
-                        // Default Values
+                        $statusRaw = strtolower($pengajuan['status']);
                         $displayStatus = strtoupper($statusRaw);
                         $badgeColor = 'bg-secondary';
                         $isLulus = false;
 
-                        // 1. PRIORITAS UTAMA: Cek apakah sudah Lulus Sidang?
-                        if (!empty($jadwal_sidang) && isset($jadwal_sidang['status_lulus']) && $jadwal_sidang['status_lulus'] == 'lulus') {
-                            $displayStatus = 'LULUS / SELESAI';
-                            $badgeColor = 'bg-primary'; // Warna Biru (Tanda Selesai)
-                            $isLulus = true;
+                        // Cek Hasil Sidang untuk Override Status Judul
+                        if (!empty($jadwal_sidang) && isset($jadwal_sidang['status_lulus'])) {
+                            if($jadwal_sidang['status_lulus'] == 'lulus') {
+                                $displayStatus = 'LULUS / SELESAI';
+                                $badgeColor = 'bg-success'; 
+                                $isLulus = true;
+                            } elseif($jadwal_sidang['status_lulus'] == 'tidak_lulus') {
+                                $displayStatus = 'TIDAK LULUS SIDANG';
+                                $badgeColor = 'bg-danger'; 
+                            }
                         } 
-                        // 2. Jika belum lulus, cek status pengajuan judul seperti biasa
-                        else {
+                        
+                        // Jika belum ada hasil sidang, pakai status judul biasa
+                        if (!$isLulus && $displayStatus != 'TIDAK LULUS SIDANG') {
                             if($statusRaw == 'pending') {
                                 $badgeColor = 'bg-warning text-dark';
                                 $displayStatus = 'MENUNGGU VALIDASI';
@@ -66,9 +70,6 @@
                             }
                             elseif($statusRaw == 'revisi') {
                                 $badgeColor = 'bg-danger'; 
-                            }
-                            elseif($statusRaw == 'ditolak') {
-                                $badgeColor = 'bg-dark';
                             }
                         }
                     ?>
@@ -98,20 +99,12 @@
                             </p>
                         </div>
                     <?php endif; ?>
-
-                    <?php if($statusRaw == 'pending'): ?>
-                        <div class="alert alert-light border mt-3 small text-center">
-                            <i class="bi bi-clock"></i> Menunggu validasi Dosen.
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
 
         <?php else: ?>
             <div class="card h-100 border-0 shadow-sm">
-                <div class="card-header bg-theme-blush fw-bold text-white">
-                    Status Pengajuan Judul
-                </div>
+                <div class="card-header bg-theme-blush fw-bold text-white">Status Pengajuan Judul</div>
                 <div class="card-body">
                     <h5 class="card-title">Belum Mengajukan</h5>
                     <p class="card-text text-muted">Anda belum mengajukan usulan judul tugas akhir.</p>
@@ -119,37 +112,22 @@
                 </div>
             </div>
         <?php endif; ?>
-
     </div>
 
     <div class="col-md-6 col-lg-4 mb-4">
         <div class="card h-100 border-0 shadow-sm">
-            <div class="card-header bg-theme-raisin fw-bold text-white">
-                Progres Bimbingan
-            </div>
+            <div class="card-header bg-theme-raisin fw-bold text-white">Progres Bimbingan</div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-2">
-                    <h2 class="fw-bold mb-0 me-2" style="color: var(--simbeta-blush);">
-                        <?= $persentase ?>%
-                    </h2>
+                    <h2 class="fw-bold mb-0 me-2" style="color: var(--simbeta-blush);"><?= $persentase ?>%</h2>
                     <span class="badge bg-secondary"><?= $labelProgres ?></span>
                 </div>
-                
                 <div class="progress" style="height: 8px;">
-                  <div class="progress-bar bg-theme-blush" 
-                       role="progressbar" 
-                       style="width: <?= $persentase ?>%" 
-                       aria-valuenow="<?= $persentase ?>" 
-                       aria-valuemin="0" 
-                       aria-valuemax="100">
-                  </div>
+                  <div class="progress-bar bg-theme-blush" role="progressbar" style="width: <?= $persentase ?>%"></div>
                 </div>
-
                 <p class="card-text text-muted mt-3 small">
                     <?php if($persentase == 100): ?>
                         Selamat! Skripsi Anda sudah lengkap (ACC).
-                    <?php elseif($persentase == 0): ?>
-                        Belum ada bab yang disetujui oleh pembimbing.
                     <?php else: ?>
                         Tetap semangat! Perjalanan masih berlanjut.
                     <?php endif; ?>
@@ -190,17 +168,32 @@
                         </li>
                     </ul>
 
-                    <?php if(isset($jadwal_sidang['status_lulus']) && $jadwal_sidang['status_lulus'] == 'lulus'): ?>
-                        <div class="alert alert-success mt-3 text-center mb-0 fw-bold">
-                             ANDA DINYATAKAN LULUS!
-                        </div>
+                    <?php if(isset($jadwal_sidang['status_lulus'])): ?>
+                        
+                        <?php if($jadwal_sidang['status_lulus'] == 'lulus'): ?>
+                            <div class="alert alert-success mt-3 text-center mb-0 fw-bold shadow-sm">
+                                <i class="bi bi-trophy-fill me-2"></i> SELAMAT! ANDA LULUS.
+                            </div>
+
+                        <?php elseif($jadwal_sidang['status_lulus'] == 'tidak_lulus'): ?>
+                            <div class="alert alert-danger mt-3 text-center mb-0 fw-bold shadow-sm">
+                                <i class="bi bi-x-circle-fill me-2"></i> MAAF, ANDA TIDAK LULUS.
+                                <div class="small fw-normal mt-1">Silakan hubungi dosen pembimbing.</div>
+                            </div>
+
+                        <?php else: ?>
+                            <div class="alert alert-light border mt-3 text-center mb-0 text-muted">
+                                <i class="bi bi-hourglass-split me-2"></i> Menunggu Hasil Sidang...
+                            </div>
+                        <?php endif; ?>
+
                     <?php endif; ?>
 
                 <?php else: ?>
                     <div class="text-center py-4 text-muted">
                         <i class="bi bi-calendar-x fs-1 d-block mb-2" style="opacity: 0.3;"></i>
                         <p>Jadwal sidang belum keluar.</p>
-                        <small>Pastikan Anda sudah menyelesaikan bimbingan (ACC Full Draft).</small>
+                        <small>Pastikan Anda sudah menyelesaikan bimbingan.</small>
                     </div>
                 <?php endif; ?>
             </div>
@@ -209,7 +202,7 @@
 
 </div>
 
-<?php if($pengajuan && $statusRaw == 'revisi' && (!isset($jadwal_sidang['status_lulus']) || $jadwal_sidang['status_lulus'] != 'lulus')): ?>
+<?php if($pengajuan && $statusRaw == 'revisi' && !$isLulus): ?>
 <div class="modal fade" id="modalRevisi" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -220,15 +213,13 @@
             <form action="<?= base_url('mahasiswa/pengajuan/update_revisi') ?>" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="id_pengajuan" value="<?= $pengajuan['id'] ?>">
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Judul Baru</label>
                         <textarea name="judul_usulan" class="form-control" rows="3" required><?= esc($pengajuan['judul_usulan']) ?></textarea>
                     </div>
-
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Deskripsi / Latar Belakang</label>
-                        <textarea name="deskripsi" class="form-control" rows="4" placeholder="Jelaskan latar belakang judul baru..."><?= esc($pengajuan['deskripsi'] ?? '') ?></textarea>
+                        <label class="form-label fw-bold">Deskripsi</label>
+                        <textarea name="deskripsi" class="form-control" rows="4"><?= esc($pengajuan['deskripsi'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

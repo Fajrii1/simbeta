@@ -53,6 +53,9 @@ $routes->group('admin', function($routes) {
     $routes->post('users/simpan', 'Admin\UserController::simpan'); // Simpan User Baru
     $routes->get('users/hapus/(:num)', 'Admin\UserController::hapus/$1'); // Hapus User
 
+    // [!!!] TAMBAHKAN BARIS INI UNTUK UPDATE:
+    $routes->post('users/update', 'Admin\UserController::update');
+
     $routes->post('sidang/update_hasil', 'Admin\SidangController::update_hasil'); // <--- Route Baru
 });
 

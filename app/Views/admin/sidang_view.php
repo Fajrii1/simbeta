@@ -48,11 +48,17 @@
                             <td>
                                 <?= $row['ruangan'] ? esc($row['ruangan']) : '-' ?>
                             </td>
+                            
                             <td>
                                 <?php if ($row['status_lulus'] == 'lulus'): ?>
                                     <span class="badge bg-success">LULUS</span>
+                                    
+                                <?php elseif ($row['status_lulus'] == 'tidak_lulus'): ?>
+                                    <span class="badge bg-danger">TIDAK LULUS</span>
+                                    
                                 <?php elseif ($row['tanggal_sidang']): ?>
                                     <span class="badge bg-info text-dark">Terjadwal</span>
+                                    
                                 <?php else: ?>
                                     <span class="badge bg-light text-dark border">Menunggu</span>
                                 <?php endif; ?>
@@ -60,16 +66,16 @@
                             <td class="text-end p-3">
                                 <div class="d-flex justify-content-end gap-2">
                                     <button class="btn btn-sm btn-outline-primary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalJadwal"
-                                        data-id="<?= $row['id'] ?>"
-                                        data-nama="<?= $row['nama_mhs'] ?>">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalJadwal"
+                                            data-id="<?= $row['id'] ?>"
+                                            data-nama="<?= $row['nama_mhs'] ?>">
                                         <i class="bi bi-pencil"></i> Jadwal
                                     </button>
 
                                     <button class="btn btn-sm btn-success"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalHasil<?= $row['id'] ?>">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalHasil<?= $row['id'] ?>">
                                         <i class="bi bi-trophy"></i> Hasil
                                     </button>
                                 </div>
@@ -103,6 +109,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </td>
                         </tr>
                     <?php endforeach; ?>
