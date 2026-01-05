@@ -1,0 +1,80 @@
+/* public/assets/css/style.css */
+
+:root {
+    /* Definisi Variabel Warna dari Palette */
+    --simbeta-raisin: #211F21;
+    --simbeta-white: #F1F1F1;
+    --simbeta-blush: #C16C8A;
+    --simbeta-orchid: #F4B8CA;
+}
+
+body {
+    background-color: var(--simbeta-white) !important; /* Latar belakang utama */
+    color: var(--simbeta-raisin); /* Warna teks utama */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Opsional: agar font lebih modern */
+}
+
+/* --- Kustomisasi Sidebar --- */
+.sidebar-custom {
+    background-color: var(--simbeta-raisin) !important;
+    color: var(--simbeta-white);
+}
+
+/* Link di sidebar (keadaan normal) */
+.sidebar-custom .nav-link {
+    color: var(--simbeta-orchid) !important; /* Menggunakan Orchid Pink agar kontrasnya pas tapi tidak terlalu terang */
+    transition: all 0.3s;
+}
+
+/* Link saat di-hover */
+.sidebar-custom .nav-link:hover {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1); /* Efek transparan sedikit */
+}
+
+/* Link yang sedang Aktif */
+.sidebar-custom .nav-pills .nav-link.active, 
+.sidebar-custom .nav-pills .show > .nav-link {
+    background-color: var(--simbeta-blush) !important; /* Menggunakan warna Blush */
+    color: #fff !important;
+}
+
+/* Garis pemisah di sidebar */
+.sidebar-custom hr {
+    background-color: var(--simbeta-orchid);
+    opacity: 0.3;
+}
+
+/* --- Kustomisasi Komponen Bootstrap Lainnya --- */
+
+/* Membuat class background baru sesuai tema untuk Card Header */
+.bg-theme-blush {
+    background-color: var(--simbeta-blush) !important;
+    color: white;
+}
+
+.bg-theme-raisin {
+    background-color: var(--simbeta-raisin) !important;
+    color: white;
+}
+
+/* Mengubah warna tombol primary default bootstrap */
+.btn-primary {
+    background-color: var(--simbeta-blush);
+    border-color: var(--simbeta-blush);
+}
+
+.btn-primary:hover {
+    background-color: var(--simbeta-raisin);
+    border-color: var(--simbeta-raisin);
+}
+
+
+/* Utility untuk memotong teks menjadi 2 baris */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2; /* Ini yang diminta editor */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
